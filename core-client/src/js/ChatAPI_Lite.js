@@ -197,20 +197,6 @@ function GenesysChatAPI(jQuery_inject){
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     function Session(params){
 
 
@@ -648,8 +634,6 @@ function GenesysChatAPI(jQuery_inject){
 
 
 
-
-
         function filterAgentEvent(event) {
             return {
                 party: {
@@ -794,15 +778,6 @@ function GenesysChatAPI(jQuery_inject){
     }
 
 
-
-
-
-
-
-
-
-
-
     function StateStorage(options){
 
         'use strict';
@@ -846,10 +821,6 @@ function GenesysChatAPI(jQuery_inject){
     }
 
 
-
-
-
-
     function MemorizedEvent(){
 
         'use strict';
@@ -879,9 +850,6 @@ function GenesysChatAPI(jQuery_inject){
             });
         };
     }
-
-
-
 
 
 

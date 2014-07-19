@@ -7,6 +7,7 @@ function Transport_REST_HTTC(oOptions){
         ChatURI = oOptions.dataURL,
         contactCenterId = oOptions.id,
         ChatID = "",
+        ParticipantID = "",
         log = console.log,
         TIMEZONE_OFFSET = (new Date()).getTimezoneOffset(),
         initDfd = new Deferred(),
@@ -219,6 +220,9 @@ function Transport_REST_HTTC(oOptions){
 
         		ChatID = response.id;
         	}
+        	if(response.pid){
+        		ParticipantID = response.pid;
+        	}
 
         	oThis.startPoll();
         });
@@ -260,6 +264,9 @@ function Transport_REST_HTTC(oOptions){
 
         		ChatID = response.id;
         	}
+        	if(response.pid){
+        		ParticipantID = response.pid;
+        	}
 
         	oThis.startPoll();
         });
@@ -273,7 +280,8 @@ function Transport_REST_HTTC(oOptions){
         return request("", "POST", {
 
             operationName: "SendMessage",
-            text: params.message
+            text: params.message,
+            pid: ParticipantID
         });
     };
 
@@ -299,7 +307,7 @@ function Transport_REST_HTTC(oOptions){
 
             "",
             "POST",
-            {operationName: "Complete"}
+            {operationName: "Complete", pid: ParticipantID}
         );
     };
 
@@ -313,7 +321,7 @@ function Transport_REST_HTTC(oOptions){
 
 	        	"",
 	        	"POST",
-	        	{operationName: "SendStartTypingNotification"}
+	        	{operationName: "SendStartTypingNotification", pid: ParticipantID}
 	        );
 
         }else{
@@ -323,7 +331,7 @@ function Transport_REST_HTTC(oOptions){
 
 	        	"",
 	        	"POST",
-	        	{operationName: "SendStopTypingNotification"}
+	        	{operationName: "SendStopTypingNotification", pid: ParticipantID}
 	        );
         }
     };

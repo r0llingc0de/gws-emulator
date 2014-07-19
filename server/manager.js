@@ -34,7 +34,8 @@ function appendMessage(chatId, participantId, type, pairs) {
     if (!chat) {
         return false;
     }
-
+    console.log('participantId=' + participantId)
+    console.log(chat);
     // user has stated they've completed 
     // the chat - no new messages allowed
     if ('Idle' === chat.state) {
@@ -106,17 +107,16 @@ function participantExists(chatId, id) {
  * @return {Chat}
  */
 exports.initChat = function(nickname, subject) {
-    var chat = {
+    
+	var chat = {
         'id': uuid.v4(),
         'state': '',
-        'nickname': nickname,
         'subject': subject,
         'participants': [],
-        'index': 0,
-        
+        'index': 0    
     };
     
-    var userId = nextParticipantId++;
+	var userId = nextParticipantId++;
     addParticipant(chat, userId, nickname, 'Customer');
     
     var systemId = nextParticipantId++;
@@ -165,15 +165,16 @@ exports.joinChat = function(nickname, chatID) {
     };
 */
 	var chat = storage.getItem(chatID);
-	chat.nickname = nickname;
+	chat.state = 'Chatting';
 	
-    addParticipant(chat, 4, nickname, 'Agent');
+	var agentId = nextParticipantId++;
+    addParticipant(chat, agentId, nickname, 'Agent');
 
     // persist addition of participants
     storage.setItem(chat.id, chat);
 
     // add messages
-    appendMessage(chat.id, 4, 'ParticipantJoined', {});
+    appendMessage(chat.id, agentId, 'ParticipantJoined', {});
 
     return chat;
 };
@@ -245,17 +246,17 @@ exports.getTranscript = function(id, index) {
 /**
  * Append message text to the chat thread from participant
  */
-exports.sendMessage = function(id, text) {
-    if (appendMessage(id, 1, 'Text', {
+exports.sendMessage = function(id, text, participantId) {
+    if (appendMessage(id, participantId, 'Text', {
         text: text
     })) {
-
+/*
         // check if the 'agent' has been added yet...
         if (!participantExists(id, 3)) {
             return true;
         }
 
-        var agentResponse;
+       var agentResponse;
         text = text.trim();
 
         // some non-scientific canned responses based on punctuation
@@ -280,7 +281,7 @@ exports.sendMessage = function(id, text) {
                 text: agentResponse
             });
         }, delay);
-
+*/
         return true;
     }
     return false;
@@ -289,22 +290,22 @@ exports.sendMessage = function(id, text) {
 /**
  * Send started typing notification to chat thread from participant
  */
-exports.sendTypingStartNotification = function(id) {
-    return appendMessage(id, 1, 'TypingStarted', {});
+exports.sendTypingStartNotification = function(id, participantId) {
+    return appendMessage(id, participantId, 'TypingStarted', {});
 };
 
 /**
  * Send stopped typing notification to chat thread from participant
  */
-exports.sendTypingStopNotification = function(id) {
-    return appendMessage(id, 1, 'TypingStopped', {});
+exports.sendTypingStopNotification = function(id, participantId) {
+    return appendMessage(id, participantId, 'TypingStopped', {});
 };
 
 /**
  * Send chat complete to thread from participant
  */
-exports.completeChat = function(id) {
+exports.completeChat = function(id, participantId) {
     clearInterval(activeTimers[id]);
     delete activeTimers[id];
-    return appendMessage(id, 1, 'ParticipantLeft', {});
+    return appendMessage(id, participantId, 'ParticipantLeft', {});
 };

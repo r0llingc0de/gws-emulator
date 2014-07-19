@@ -81,17 +81,21 @@ app.post('/api/v2/chats', function(req, res) {
         if (parsed.success && msg.operationName && 'RequestChat' === msg.operationName) {
             if (msg.nickname && (msg.subject || msg.chatId)) {
             	var chat = null;
-            	if(msg.chatId){
+            	var participantId = null;
+            	if(msg.chatId){ //join chat
             		chat = manager.joinChat(msg.nickname, msg.chatId);
-            		
-            	}else {
+            		participantId = chat.participants[chat.participants.length-1].participantId;
+            	}else { //init chat
 	                chat = manager.initChat(msg.nickname, msg.subject);
+            		participantId = chat.participants[0].participantId;
             	}
                 logger.info(sprintf('success [id=%s, operation=%s, nickname=%s, subject=%s]', chat.id, msg.operationName, msg.nickname, msg.subject));
+                
                 var reply = {
                     'id': chat.id,
                     'statusCode': 0,
-                    'path': '/api/v2/chats/' + chat.id
+                    'path': '/api/v2/chats/' + chat.id,
+                    'pid': participantId
                 };
                 res.status(200).json(reply);
                 logger.debug(sprintf('<< %s', JSON.stringify(reply)));
@@ -115,22 +119,23 @@ app.post('/api/v2/chats/:id', function(req, res) {
     req.on('end', function() {
         var parsed = messageToJSON(payload);
         var msg = parsed.json;
-
+        console.log(msg);
         var id = req.param('id');
+        var participantId = msg.pid;
         if (parsed.success && msg.operationName && id) {
             var complete = false;
             switch (msg.operationName) {
                 case 'SendMessage':
-                    complete = manager.sendMessage(id, msg.text);
+                    complete = manager.sendMessage(id, msg.text, participantId);
                     break;
                 case 'SendStartTypingNotification':
-                    complete = manager.sendTypingStartNotification(id);
+                    complete = manager.sendTypingStartNotification(id, participantId);
                     break;
                 case 'SendStopTypingNotification':
-                    complete = manager.sendTypingStopNotification(id);
+                    complete = manager.sendTypingStopNotification(id, participantId);
                     break;
                 case 'Complete':
-                    complete = manager.completeChat(id);
+                    complete = manager.completeChat(id, participantId);
                     break;
                 default:
                     res.send(405);
@@ -138,7 +143,7 @@ app.post('/api/v2/chats/:id', function(req, res) {
             }
 
             if (complete) {
-                logger.info(sprintf('success [id=%s, operation=%s]', id, msg.operationName));
+                logger.info(sprintf('success [id=%s, operation=%s, pid=%s]', id, msg.operationName, participantId));
                 var reply = {
                     'statusCode': 0
                 };
@@ -147,7 +152,7 @@ app.post('/api/v2/chats/:id', function(req, res) {
                 return;
             }
         }
-        logger.info(sprintf('fail [id=%s, operation=%s]', id, msg.operationName));
+        logger.info(sprintf('fail [id=%s, operation=%s, pid=%s]', id, msg.operationName, participantId));
         res.send(400);
     });
 });
