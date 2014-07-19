@@ -55,6 +55,7 @@ var app = express();
 app.use(logErrors);
 app.use(errorHandler);
 app.use('/client', express.static(__dirname + '/../client'));
+app.use('/client-agent', express.static(__dirname + '/../client-agent'));
 app.set('port', process.env.PORT || 8888);
 
 app.all('*', function(req, res, next) {
