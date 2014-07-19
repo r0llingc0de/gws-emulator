@@ -340,6 +340,15 @@ function Transport_REST_HTTC(oOptions){
 	        );
         }
     };
+    
+    this.getChatList = function(options){
+    	
+    	return request(
+    			"",
+    			"GET",
+    			{}
+    			);
+    };
 
     this.setUserData = function(options){
         //return post('SetUserData', options);

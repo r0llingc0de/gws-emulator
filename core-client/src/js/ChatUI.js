@@ -276,14 +276,35 @@ function GenesysChatUI($, ndContainer, oTransport, oTransportData){
     };
     
     this.getActiveChatList = function(){
-    /*	
+    	
     	oChatAPI.getChatList({
 
             transport: new oTransport(oTransportData)
 
-        }).done(function(){
+        }).done(function(chatList){
         	//set select option elements
-        });*/
+        	console.log("return from getChatList");
+        	
+        	var ndForm = oElements.Form;
+        	var select = $(ndForm.find("select[name=chatlist]"));
+        	
+        	select.change(function(ev) {
+        		var chatIdInput = ndForm.find("input[name=chatid]")[0];
+        		var id = this.options[this.selectedIndex].value
+        		chatIdInput.value = id;
+        	});
+        	var i;
+        	for(i=0; i< chatList.length; i++){
+        		var chatInst = chatList[i];
+        		select.append("<option value="+ chatInst.id +">" + chatInst.subject +"</option>");
+        	}
+        	
+        	if(select[0].options.length > 0){
+	        	var chatIdInput = ndForm.find("input[name=chatid]")[0];
+	    		var id = select[0].options[0].value
+	    		chatIdInput.value = id;
+        	}
+        });
     };
 
 
