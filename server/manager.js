@@ -132,7 +132,7 @@ exports.initChat = function(nickname, subject) {
     // into the thread until it becomes completed
     activeTimers[chat.id] = setInterval(function() {
         appendMessage(chat.id, systemId, 'Text', { text: 'Current Time: ' + new Date() });
-    }, 1000 * 20);
+    }, 1000 * 60);
 /*
     // after 1-3 seconds, add an agent participant into the mix
     var delay = 1000 * (Math.floor(Math.random() * 3) + 1);

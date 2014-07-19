@@ -356,17 +356,21 @@ function GenesysChatUI($, ndContainer, oTransport, oTransportData){
         var ndMessage = $("<p><span class='name'></span></p>");
 
         // non-agent participants don't see messages starting with #
-        var isHidden = sText.indexOf('#')==0 && !isAgent;
+        var isMeta = sText.indexOf('#')==0;
+        var isHidden = isMeta && !isAgent;
         
         if (!isHidden) {
             ndMessage.addClass((bSystemMessage)?"system":"").addClass((bAgent)?"them":"you");
+            if (isMeta) {
+            	ndMessage.addClass("metaMessage");
+            }
             ndMessage.append(sText);
             ndMessage.find(".name").text(sName);
             ndMessage.fadeIn();
         }
             
         oElements.Transcript.append(ndMessage);
-
+            
         scrollToEnd();
     }
 

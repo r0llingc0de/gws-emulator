@@ -92,6 +92,11 @@
 	clear:both;
 }
 
+.ChatUI .transcript .metaMessage {
+	color: #FF0000;
+	font-weight:bold;
+}
+
 .ChatUI .transcript .them .name{
 
 	font-style:italic;
