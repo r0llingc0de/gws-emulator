@@ -34,8 +34,7 @@ function appendMessage(chatId, participantId, type, pairs) {
     if (!chat) {
         return false;
     }
-    console.log('participantId=' + participantId)
-    console.log(chat);
+    
     // user has stated they've completed 
     // the chat - no new messages allowed
     if ('Idle' === chat.state) {

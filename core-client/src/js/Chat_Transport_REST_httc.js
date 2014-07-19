@@ -13,8 +13,9 @@ function Transport_REST_HTTC(oOptions){
         initDfd = new Deferred(),
         callbacks = {},
 		bPolling = false,
-		iPollInterval_ms = 3000,
-		bFirstPoll = true;
+		iPollInterval_ms = 1000,
+		bFirstPoll = true,
+		lastIndexPolled = 0;
 
 
     function getPromise(deferred){
@@ -95,6 +96,9 @@ function Transport_REST_HTTC(oOptions){
                 callbacks[entry.type](entry);
             }
         });
+        if(transcript.messages.length > 0){
+        	lastIndexPolled = transcript.messages[transcript.messages.length-1].index;
+        }
     }
 
 
@@ -287,7 +291,8 @@ function Transport_REST_HTTC(oOptions){
 
     this.getTranscript = function(options){
 
-        return request("/messages", "GET");
+        return request("/messages?index=" + (lastIndexPolled+1), "GET");
+        //return request("/messages", "GET");
     };
 
     this.getChat = function(options){

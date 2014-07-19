@@ -119,7 +119,6 @@ app.post('/api/v2/chats/:id', function(req, res) {
     req.on('end', function() {
         var parsed = messageToJSON(payload);
         var msg = parsed.json;
-        console.log(msg);
         var id = req.param('id');
         var participantId = msg.pid;
         if (parsed.success && msg.operationName && id) {
@@ -176,7 +175,7 @@ app.get('/api/v2/chats/:id', function(req, res) {
 app.get('/api/v2/chats/:id/messages', function(req, res) {
     var id = req.param('id');
     var index = req.query.index;
-    logger.debug(sprintf('>> GET transcript %s', id));
+    logger.debug(sprintf('>> GET transcript %s, index=%s', id, index));
     var transcript = manager.getTranscript(id, index);
     if (transcript) {
         logger.info(sprintf('success [id=%s, operation=GetChatMessages, index=%s]', id, index));
