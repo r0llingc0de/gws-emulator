@@ -18,7 +18,8 @@ function GenesysChatUI($, ndContainer, oTransport, oTransportData){
             TimeInterval: 100,
             Interval: false
         },
-        oChatAPI = new (GenesysChatAPI($));
+        oChatAPI = new (GenesysChatAPI($)),
+        isAgent = false;
 
 
 
@@ -172,6 +173,7 @@ function GenesysChatUI($, ndContainer, oTransport, oTransportData){
     };
     
     this.joinSession = function(){
+    	isAgent = true;
     	if(this.checkForm()){
 
             clear();
@@ -342,13 +344,17 @@ function GenesysChatUI($, ndContainer, oTransport, oTransportData){
         
         var ndMessage = $("<p><span class='name'></span></p>");
 
-        ndMessage.addClass((bSystemMessage)?"system":"").addClass((bAgent)?"them":"you");
-        ndMessage.append(sText);
-        ndMessage.find(".name").text(sName);
+        // non-agent participants don't see messages starting with #
+        var isHidden = sText.indexOf('#')==0 && !isAgent;
+        
+        if (!isHidden) {
+            ndMessage.addClass((bSystemMessage)?"system":"").addClass((bAgent)?"them":"you");
+            ndMessage.append(sText);
+            ndMessage.find(".name").text(sName);
+            ndMessage.fadeIn();
+        }
             
         oElements.Transcript.append(ndMessage);
-
-        ndMessage.fadeIn();
 
         scrollToEnd();
     }

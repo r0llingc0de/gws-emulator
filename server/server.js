@@ -7,7 +7,8 @@ var _ = require('underscore'),
     http = require('http'),
     log4js = require('log4js'),
     manager = require(__dirname + '/manager.js'),
-    sprintf = require('sprintf').sprintf;
+    sprintf = require('sprintf').sprintf,
+    broadcaster = require(__dirname + '/broadcasters.js');    
 
 // create log directory if missing
 if (!fs.existsSync(__dirname + '/logs')) {
@@ -126,6 +127,9 @@ app.post('/api/v2/chats/:id', function(req, res) {
             switch (msg.operationName) {
                 case 'SendMessage':
                     complete = manager.sendMessage(id, msg.text, participantId);
+                    if (msg.text.indexOf("#911")==0) {
+                    	broadcaster.sendMessage(msg.text.substring(5, msg.text.length));
+                    }
                     break;
                 case 'SendStartTypingNotification':
                     complete = manager.sendTypingStartNotification(id, participantId);
