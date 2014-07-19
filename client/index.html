@@ -16,13 +16,15 @@
 		<h1>Chat - REST API Test</h1>
 
 		<!-- Debug controls -->
-		<button class="chat-control start">Start Chat</button>
+		<button class="chat-control start">Start New Chat</button>
+		<button class="chat-control join">Join Existing Chat</button>
 		<button class="chat-control end" DISABLED="DISABLED">End Chat</button>
 		<br/>
 		<!-- start: Template for Chat Widget -->
 		<div id="demo_chat_XYZ" class="ChatUI">
 			<div class="title">Chat Support</div>
 			<div class="form">
+				<label><span>Chat ID</span><input name="chatid"/></label>
 				<label><span>First Name</span><input name="firstname"/></label>
 				<label><span>Last Name</span><input name="lastname"/></label>
 				<label><span>Nickname</span><input name="nickname"/></label>
@@ -71,6 +73,14 @@
 			$(".chat-control.start").click(function(){
 
 				oChatUI.startSession();
+				//this.disabled = true;
+				$(".chat-control.end")[0].disabled = false;
+			});
+			
+			// Setup debug controls
+			$(".chat-control.join").click(function(){
+
+				oChatUI.joinSession();
 				//this.disabled = true;
 				$(".chat-control.end")[0].disabled = false;
 			});

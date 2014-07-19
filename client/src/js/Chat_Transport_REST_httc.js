@@ -223,6 +223,48 @@ function Transport_REST_HTTC(oOptions){
         	oThis.startPoll();
         });
     };
+    
+    this.joinSession = function(params){
+    	console.log("RESTTransport.joinSession()")
+
+    	var userData = {}
+
+    	if(oOptions.formData.firstname || oOptions.formData.lastname || oOptions.formData.email){
+
+			userData = {
+
+                "FirstName":    oOptions.formData.firstname,
+                "LastName":     oOptions.formData.lastname,
+                "EmailAddress": oOptions.formData.email
+            };
+		}
+    	
+    	var joinChatID = null;
+    	if(oOptions.formData.chatid){
+    		joinChatID = oOptions.formData.chatid;
+    	}
+
+    	var oThis = this;
+
+        return request("", "POST", {
+
+            operationName:  "RequestChat",
+            nickname:       oOptions.formData.nickname||"Anonymous",
+            subject:        oOptions.formData.subject||"No Subject",
+			userData:       userData,
+			chatId:			joinChatID
+
+        }).done(function(response){
+
+        	if(response.id){
+
+        		ChatID = response.id;
+        	}
+
+        	oThis.startPoll();
+        });
+    	
+    };
 
     this.sendMessage = function(params){
 

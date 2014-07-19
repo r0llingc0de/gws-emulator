@@ -170,6 +170,103 @@ function GenesysChatUI($, ndContainer, oTransport, oTransportData){
             });
         }
     };
+    
+    this.joinSession = function(){
+    	if(this.checkForm()){
+
+            clear();
+            this.hideForm();
+
+            oChatAPI.joinSession({
+
+                transport: new oTransport(oTransportData)
+
+            }).done(function(oNewSession){
+
+                var oE = oElements;
+
+                oNewSession.onMessageReceived(function(e){
+
+                    var bSystemMessage = (e.party.name == "system" && e.party.type.external);
+
+
+                    if(e.content.type == "notice"){
+
+                        addNotice(e.party.name, e.content.text);
+
+                    }else{
+
+                        addMessage(e.party.name, e.content.text, e.party.type.agent, bSystemMessage);
+                    }
+
+                    if(e.party.type.agent){
+
+                        oE.IsTyping.fadeOut();
+                    }
+                });
+
+                oNewSession.onAgentConnected(function(e){
+                    
+                    if(e.party.type == "Agent"){
+
+                        addMessage(e.party.name, (e.party.name||"Agent")+" Connected", false, true);
+
+                    }else if(e.party.type == "Client"){
+
+                        addMessage(e.party.name, "Chat Started", false, true);
+                    }
+                });
+
+                oNewSession.onAgentDisconnected(function(e){
+                    
+                    if(e.party.type == "Agent"){
+
+                        addMessage(e.party.name, (e.party.name||"Agent")+" Disconnected", false, true);
+                    
+                    }else if(e.party.type == "Client"){
+
+                        addMessage(e.party.name, "Chat Ended", false, true);
+                    }
+                });
+
+                oNewSession.onAgentTyping(function(e){
+                    
+                    if(e.party.type == "Agent"){
+
+                        if(e.isTyping){
+
+                            oE.IsTyping.html((e.party.name||"Agent")+" is typing...").fadeIn();
+
+                        }else{
+
+                            oE.IsTyping.fadeOut();
+                        }
+                    }
+                });
+
+                oNewSession.onSessionEnded(function(event){
+
+                    addMessage("", "Chat Ended", false, true);
+
+                    oE.Input.addClass("disabled")[0].disabled = true;
+                    oSession = null;
+                });
+
+                oSession = oNewSession;
+
+                oE.Input.removeClass("disabled")[0].disabled = false;
+
+                $(window).unload(function(){
+
+                    endSession();
+                });
+
+            }).fail(function(){
+
+                alert("Chat Session failed to join.");
+            });
+        }
+    };
 
     this.endSession = function(){
 
@@ -181,8 +278,8 @@ function GenesysChatUI($, ndContainer, oTransport, oTransportData){
 
         var ndForm = oElements.Form,
             bValid = true,
-            aFields = ["firstname", "lastname", "nickname", "subject", "email"],
-            oFieldsRequired = {firstname: false, lastname: false, nickname: false, subject: false, email: false},
+            aFields = ["chatid", "firstname", "lastname", "nickname", "subject", "email"],
+            oFieldsRequired = {chatid:false, firstname: false, lastname: false, nickname: false, subject: false, email: false},
             aFieldsInvalid = [];
 
         ndForm.find("input").removeClass("error");

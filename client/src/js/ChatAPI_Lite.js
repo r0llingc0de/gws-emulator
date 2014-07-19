@@ -129,6 +129,71 @@ function GenesysChatAPI(jQuery_inject){
 
             return getSimplePromise(dfd);
         };
+        
+        this.joinSession = function(params){
+        	var dfd;
+
+            if(!params.chatServerUrl && !params.transport){
+
+                throwError('either chatServerUrl or a custom transport must be provided');
+            }
+
+            log = params.logger || $.noop;
+            transport = getTransport(params);
+            dfd = new Deferred();
+
+            log('joinSession: initializing transport');
+
+            transport.init().fail(
+
+                createTransportFailureResolver(dfd, log)
+
+            ).done(
+
+                function(){
+                    
+                    var joinSessionParams = {
+                    	chatid:		params.chatid,
+                        username:   params.username,
+                        userData:   params.userData,
+                        source:     params.source,
+                        subject:    params.subject
+                    };
+
+                    if(!joinSessionParams.username){
+                        
+                        joinSessionParams.username = DEFAULT_USERNAME;
+                    }
+
+                    log('joinSession: transport initialized, joining session ', joinSessionParams);
+
+                    transport.joinSession(joinSessionParams).done(function(event){
+
+                        log('joinSession request returned ', event);
+                        log('joinSession succeeded');
+
+                        dfd.resolve(
+
+                            new Session({
+
+                                state: {
+
+                                    sessionId: event.sessionId,
+                                    chatServerUrl: params.chatServerUrl,
+                                    lastIndex: 0
+                                },
+                                transport: transport,
+                                stateStorage: getStateStorage(params),
+                                logger: log
+                            })
+                        );
+                    });
+                }
+            );
+
+            return getSimplePromise(dfd);
+        	
+        };
     }
 
 

@@ -77,8 +77,14 @@ app.post('/api/v2/chats', function(req, res) {
         var msg = parsed.json;
 
         if (parsed.success && msg.operationName && 'RequestChat' === msg.operationName) {
-            if (msg.nickname && msg.subject) {
-                var chat = manager.initChat(msg.nickname, msg.subject);
+            if (msg.nickname && (msg.subject || msg.chatId)) {
+            	var chat = null;
+            	if(msg.chatId){
+            		chat = manager.joinChat(msg.nickname, msg.chatId);
+            		
+            	}else {
+	                chat = manager.initChat(msg.nickname, msg.subject);
+            	}
                 logger.info(sprintf('success [id=%s, operation=%s, nickname=%s, subject=%s]', chat.id, msg.operationName, msg.nickname, msg.subject));
                 var reply = {
                     'id': chat.id,

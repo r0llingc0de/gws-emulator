@@ -8,6 +8,8 @@ var _ = require('underscore'),
 // hash of chat id => intervalObject
 var activeTimers = {};
 
+var nextParticipantId = 1;
+
 // init persist of chat data
 storage.initSync({
     dir: '../../../chats',
@@ -110,33 +112,68 @@ exports.initChat = function(nickname, subject) {
         'nickname': nickname,
         'subject': subject,
         'participants': [],
-        'index': 0
+        'index': 0,
+        
     };
-
-    addParticipant(chat, 1, nickname, 'Customer');
-    addParticipant(chat, 2, 'system', 'External');
+    
+    var userId = nextParticipantId++;
+    addParticipant(chat, userId, nickname, 'Customer');
+    
+    var systemId = nextParticipantId++;
+    addParticipant(chat, systemId, 'system', 'External');
 
     // persist addition of participants
     storage.setItem(chat.id, chat);
 
     // add messages
-    appendMessage(chat.id, 1, 'ParticipantJoined', {});
-    appendMessage(chat.id, 2, 'ParticipantJoined', {});
+    appendMessage(chat.id, userId, 'ParticipantJoined', {});
+    appendMessage(chat.id, systemId, 'ParticipantJoined', {});
 
     // add timer, periodically inserting a message
     // into the thread until it becomes completed
     activeTimers[chat.id] = setInterval(function() {
-        appendMessage(chat.id, 2, 'Text', { text: 'Current Time: ' + new Date() });
+        appendMessage(chat.id, systemId, 'Text', { text: 'Current Time: ' + new Date() });
     }, 1000 * 20);
-
+/*
     // after 1-3 seconds, add an agent participant into the mix
     var delay = 1000 * (Math.floor(Math.random() * 3) + 1);
     setTimeout(function() {
+    	
         addParticipant(chat, 3, 'Roboto', 'Agent');
         appendMessage(chat.id, 3, 'ParticipantJoined', {});
         chat.state = 'Chatting';
         storage.setItem(chat.id, chat);
     }, delay);
+*/
+    return chat;
+};
+
+/**
+ * Returns an existing chat thread to join
+ * @param nickname user nickname
+ * @param chatID the ID for the chat to join
+ * @return {Chat}
+ */
+exports.joinChat = function(nickname, chatID) {
+/*    var chat = {
+        'id': uuid.v4(),
+        'state': '',
+        'nickname': nickname,
+        'subject': subject,
+        'participants': [],
+        'index': 0
+    };
+*/
+	var chat = storage.getItem(chatID);
+	chat.nickname = nickname;
+	
+    addParticipant(chat, 4, nickname, 'Agent');
+
+    // persist addition of participants
+    storage.setItem(chat.id, chat);
+
+    // add messages
+    appendMessage(chat.id, 4, 'ParticipantJoined', {});
 
     return chat;
 };
