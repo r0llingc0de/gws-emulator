@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=10"/>
 		<title>Genesys Chat - REST API</title>
-		<link type="text/css" rel="stylesheet" href="../core-client/src/css/ChatUI.css"/>
+		<link type="text/css" rel="stylesheet" href="../core-client/src/css/ChatUI-Agent.css"/>
 		<link type="text/css" title="chat-ui" rel="stylesheet" href="../core-client/src/css/config.css"/>
 		<script src="../core-client/src/js/jquery-1.11.1.min.js"></script>
 		<script src="../core-client/src/js/ChatAPI_Lite.js"></script>
@@ -13,23 +13,22 @@
 	</head>
 	<body>
 
-		<h1>Chat - REST API Test</h1>
+		<h1>Chat - Support Agent View</h1>
 
 		<!-- Debug controls -->
-		<button class="chat-control start">Start New Chat</button>
-		<button class="chat-control join">Join Existing Chat</button>
+		<button class="chat-control join">Join Customer Chat</button>
 		<button class="chat-control end" DISABLED="DISABLED">End Chat</button>
+		<button class="chat-control refresh">Refresh Chat List</button>
 		<br/>
 		<!-- start: Template for Chat Widget -->
 		<div id="demo_chat_XYZ" class="ChatUI">
 			<div class="title">Chat Support</div>
 			<div class="form">
+				<label><span>Active Chats</span><select name="chatselect"></select></label>
 				<label><span>Chat ID</span><input name="chatid"/></label>
 				<label><span>First Name</span><input name="firstname"/></label>
 				<label><span>Last Name</span><input name="lastname"/></label>
 				<label><span>Nickname</span><input name="nickname"/></label>
-				<label><span>Subject</span><input name="subject"/></label>
-				<label><span>Email</span><input name="email"/></label>
 			</div>
 			<div class="transcript"></div>
 			<div class="input-container">
@@ -68,13 +67,13 @@
 				}
 			);
 			*/
-
+			
+			//fetch the list of active chat sessions and populate the select control
+			oChatUI.getActiveChatList();
+			
 			// Setup debug controls
-			$(".chat-control.start").click(function(){
-
-				oChatUI.startSession();
-				//this.disabled = true;
-				$(".chat-control.end")[0].disabled = false;
+			$(".chat-control.refresh").click(function(){
+				oChatUI.getActiveChatList();
 			});
 			
 			// Setup debug controls
@@ -83,13 +82,14 @@
 				oChatUI.joinSession();
 				//this.disabled = true;
 				$(".chat-control.end")[0].disabled = false;
+				this.disabled = true;
 			});
 
 			$(".chat-control.end").click(function(){
 
 				oChatUI.endSession();
-				//this.disabled = true;
-				$(".chat-control.start")[0].disabled = false;
+				this.disabled = true;
+				$(".chat-control.join")[0].disabled = false;
 			});
 
 		</script>

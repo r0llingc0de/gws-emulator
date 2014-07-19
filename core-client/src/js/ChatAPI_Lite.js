@@ -194,6 +194,20 @@ function GenesysChatAPI(jQuery_inject){
             return getSimplePromise(dfd);
         	
         };
+        
+        this.getDataList = function(params){
+        	
+        	var dfd;
+
+            if(!params.transport){
+
+                throwError('a custom transport must be provided');
+            }
+
+            log = params.logger || $.noop;
+            transport = getTransport(params);
+            dfd = new Deferred();
+        };
     }
 
 

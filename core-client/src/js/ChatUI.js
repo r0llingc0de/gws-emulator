@@ -274,14 +274,25 @@ function GenesysChatUI($, ndContainer, oTransport, oTransportData){
 
         oSession.leave();
     };
+    
+    this.getActiveChatList = function(){
+    /*	
+    	oChatAPI.getChatList({
+
+            transport: new oTransport(oTransportData)
+
+        }).done(function(){
+        	//set select option elements
+        });*/
+    };
 
 
     this.checkForm = function(){
 
         var ndForm = oElements.Form,
             bValid = true,
-            aFields = ["chatid", "firstname", "lastname", "nickname", "subject", "email"],
-            oFieldsRequired = {chatid:false, firstname: false, lastname: false, nickname: false, subject: false, email: false},
+            aFields = ["firstname", "lastname", "nickname", "subject", "email", "chatid"],
+            oFieldsRequired = {firstname: false, lastname: false, nickname: false, subject: false, email: false, chatid: false},
             aFieldsInvalid = [];
 
         ndForm.find("input").removeClass("error");
