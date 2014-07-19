@@ -287,6 +287,10 @@ function GenesysChatUI($, ndContainer, oTransport, oTransportData){
         	
         	var ndForm = oElements.Form;
         	var select = $(ndForm.find("select[name=chatlist]"));
+        	var j;
+        	for(j=0; j<select[0].options.length;j++){
+        		select[0].remove(select[0].options[j]);
+        	}
         	
         	select.change(function(ev) {
         		var chatIdInput = ndForm.find("input[name=chatid]")[0];
@@ -296,7 +300,7 @@ function GenesysChatUI($, ndContainer, oTransport, oTransportData){
         	var i;
         	for(i=0; i< chatList.length; i++){
         		var chatInst = chatList[i];
-        		select.append("<option value="+ chatInst.id +">" + chatInst.subject +"</option>");
+        		select.append("<option value="+ chatInst.id +">" + chatInst.state + " - " + chatInst.subject +"</option>");
         	}
         	
         	if(select[0].options.length > 0){

@@ -319,7 +319,7 @@ exports.getChatList = function(){
 	var i;
 	for(i=0; i<listCount; i++){
 		var chatInstance = storage.getItem(storage.key(i));
-		if('WaitingForAgent' === chatInstance.state){
+		if('WaitingForAgent' === chatInstance.state || 'Chatting' === chatInstance.state){
 			chatList.push(chatInstance);
 		}
 	}
