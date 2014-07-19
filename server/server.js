@@ -109,6 +109,20 @@ app.post('/api/v2/chats', function(req, res) {
 
 });
 
+//GET chat list request
+app.get('/api/v2/chats', function(req, res) {
+
+	var chatList = manager.getChatList();
+    var reply = {
+        'chatList': chatList,
+        'statusCode': 0              
+    };
+    res.status(200).json(reply);
+    logger.debug(sprintf('<< {statusCode=%s}', reply.statusCode));
+    return;
+       
+});
+
 // all in-chat operations
 app.post('/api/v2/chats/:id', function(req, res) {
 

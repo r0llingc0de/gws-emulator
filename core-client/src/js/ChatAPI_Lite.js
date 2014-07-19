@@ -195,7 +195,7 @@ function GenesysChatAPI(jQuery_inject){
         	
         };
         
-        this.getDataList = function(params){
+        this.getChatList = function(params){
         	
         	var dfd;
 
@@ -207,6 +207,15 @@ function GenesysChatAPI(jQuery_inject){
             log = params.logger || $.noop;
             transport = getTransport(params);
             dfd = new Deferred();
+            
+            transport.getChatList().done(function(event){
+            	log('getChatList request returned ', event);
+                log('getChatList succeeded');
+            	dfd.resolve(event.chatList);
+            });
+            
+            
+            return getSimplePromise(dfd);
         };
     }
 

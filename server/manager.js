@@ -49,7 +49,12 @@ function appendMessage(chatId, participantId, type, pairs) {
     // on particular events, change the state
     switch (type) {
         case 'ParticipantJoined':
-            chat.state = 'WaitingForAgent';
+        	
+            if('Agent' === participant.type){
+            	chat.state = 'Chatting';
+            }else {
+            	chat.state = 'WaitingForAgent';
+            }
             break;
         case 'ParticipantLeft':
             chat.state = 'Idle';
@@ -66,7 +71,6 @@ function appendMessage(chatId, participantId, type, pairs) {
     }, pairs);
     chat.messages = chat.messages || [];
     chat.messages.push(message);
-
     storage.setItem(chat.id, chat);
     return true;
 }
@@ -164,7 +168,6 @@ exports.joinChat = function(nickname, chatID) {
     };
 */
 	var chat = storage.getItem(chatID);
-	chat.state = 'Chatting';
 	
 	var agentId = nextParticipantId++;
     addParticipant(chat, agentId, nickname, 'Agent');
@@ -308,3 +311,17 @@ exports.completeChat = function(id, participantId) {
     delete activeTimers[id];
     return appendMessage(id, participantId, 'ParticipantLeft', {});
 };
+
+exports.getChatList = function(){
+	var chatList = [];
+	
+	var listCount = storage.length();
+	var i;
+	for(i=0; i<listCount; i++){
+		var chatInstance = storage.getItem(storage.key(i));
+		if('WaitingForAgent' === chatInstance.state || 'Chatting' === chatInstance.state){
+			chatList.push(chatInstance);
+		}
+	}
+	return chatList;
+}
